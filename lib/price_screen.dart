@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bitcoin_ticker/coin_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,7 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'USD';
 
-  List<DropdownMenuItem<String>> getDropdownItems() {
+  DropdownButton<String> androidDropdown() {
     List<DropdownMenuItem<String>> dropdownMenuItem = [];
 
     for (String currency in currenciesList) {
@@ -21,17 +23,31 @@ class _PriceScreenState extends State<PriceScreen> {
       dropdownMenuItem.add(newItem);
     }
 
-    return dropdownMenuItem;
+    return DropdownButton<String>(
+      value: selectedCurrency,
+      items: dropdownMenuItem,
+      onChanged: (value) {
+        setState(() {
+          selectedCurrency = value;
+        });
+      },
+    );
   }
 
-  List<Text> getPickerItems() {
+  CupertinoPicker iOSPicker() {
     List<Text> pickerItems = [];
 
     for (String currency in currenciesList) {
       pickerItems.add(Text(currency));
     }
 
-    return pickerItems;
+    return CupertinoPicker(
+      itemExtent: 40.0,
+      onSelectedItemChanged: (index) {
+        print(index);
+      },
+      children: pickerItems,
+    );
   }
 
   @override
@@ -70,26 +86,10 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightBlue,
-            child: CupertinoPicker(
-              itemExtent: 40.0,
-              onSelectedItemChanged: (index) {
-                print(index);
-              },
-              children: getPickerItems(),
-            ),
+            child: Platform.isIOS ? iOSPicker() : androidDropdown(),
           ),
         ],
       ),
     );
   }
 }
-
-// DropdownButton<String>(
-// value: selectedCurrency,
-// items: getDropdownItems(),
-// onChanged: (value) {
-// setState(() {
-// selectedCurrency = value;
-// });
-// },
-// )
