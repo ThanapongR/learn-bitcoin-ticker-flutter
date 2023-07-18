@@ -37,18 +37,21 @@ const List<String> cryptoList = [
 const String openCoinAPIURL = "https://rest.coinapi.io/v1/exchangerate";
 
 class CoinData {
-  Future<double> getCoinData(String selectedCurrency) async {
-    http.Response response = await http
-        .get('$openCoinAPIURL/BTC/$selectedCurrency?&apikey=$kCoinAPI');
+  Future<Map<String, String>> getCoinData(String selectedCurrency) async {
+    Map<String, String> cryptoPrices = {};
+    for (String crypto in cryptoList) {
+      http.Response response = await http
+          .get('$openCoinAPIURL/$crypto/$selectedCurrency?&apikey=$kCoinAPI');
 
-    if (response.statusCode == 200) {
-      dynamic decodeData = jsonDecode(response.body);
-      double rate = decodeData['rate'];
-      return rate;
-    } else {
-      print(response.statusCode);
+      if (response.statusCode == 200) {
+        dynamic decodeData = jsonDecode(response.body);
+        double rate = decodeData['rate'];
+        cryptoPrices[crypto] = rate.toStringAsFixed(0);
+      } else {
+        print(response.statusCode);
+        throw 'Problem with the get request';
+      }
     }
-
-    return 0;
+    return cryptoPrices;
   }
 }
