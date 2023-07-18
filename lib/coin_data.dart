@@ -23,6 +23,7 @@ const List<String> currenciesList = [
   'RUB',
   'SEK',
   'SGD',
+  'THB',
   'USD',
   'ZAR'
 ];
@@ -36,9 +37,9 @@ const List<String> cryptoList = [
 const String openCoinAPIURL = "https://rest.coinapi.io/v1/exchangerate";
 
 class CoinData {
-  Future<double> getCoinData() async {
-    http.Response response =
-        await http.get('$openCoinAPIURL/BTC/USD?&apikey=$kCoinAPI');
+  Future<double> getCoinData(String selectedCurrency) async {
+    http.Response response = await http
+        .get('$openCoinAPIURL/BTC/$selectedCurrency?&apikey=$kCoinAPI');
 
     if (response.statusCode == 200) {
       dynamic decodeData = jsonDecode(response.body);
